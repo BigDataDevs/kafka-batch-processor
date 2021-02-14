@@ -1,0 +1,15 @@
+bin/
+build/
+.project
+.settings/
+classes/
+/logs/
+.idea
+.classpath
+.gradle/
+docker/logs
+docker/src
+docker/elasticsearch/data
+
+**/*DS_Store
+*.iml
