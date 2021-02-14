@@ -14,7 +14,7 @@ Provided example implementations of the IBatchProcessor are:
 ** SimpleLoggerProcessor - logs info about processed batches into log files (great for debugging your pipelines)
 
 
-It is a simple Spring-based JAva library - that can be easily included as a JAR dependency to your own project - and used to process events from Kafka in batches.
+It is a simple Spring-based Java library - that can be easily included as a JAR dependency to your own project - and used to process events from Kafka in batches.
 
 You can easily customize how to handle:
 
@@ -22,7 +22,7 @@ You can easily customize how to handle:
 
 ** recoverable vs, non-recoverable exceptions while processing events and batches
 
-** when and under what conditions to connit or not commit offsets of "processed" batches
+** when and under what conditions to commit or not commit offsets of "processed" batches
 
 ** retry behavior in cases of failures
 
@@ -31,7 +31,7 @@ You can easily customize how to handle:
 
 ## Architecture of the kafka-batch-processor
 
-![](images/Kafka-batch-processor Architecture 1.jpg)
+![](images/Kafka-batch-processor-Architecture1.jpg)
 
 ** One batch of messages is composed of all messages retrieved during one poll() call to Kafka
 OR it can comprised of multiple poll() messages if implemented this way in a custom IBatchProcessor implementation.
@@ -49,7 +49,7 @@ OR it can comprised of multiple poll() messages if implemented this way in a cus
 
 Kafka Batch Processor is highly scalable. To scale horizontally - you need to start additional instances of your application and they will form the same consumer group and share the load of event processing:
 
-![](images/Kafka-batch-processor Architecture 2.jpg)
+![](images/Kafka-batch-processor-Architecture2.jpg)
 
 
 **Main features:**
