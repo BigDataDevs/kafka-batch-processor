@@ -15,22 +15,21 @@
             ignore-resource-not-found="true" properties-ref="applicationProperties"/>
     <context:annotation-config />
 
-    <bean id="messageProcessor"
-          class="org.elasticsearch.kafka.indexer.service.impl.examples.ESBatchMessageProcessorImpl"
+    <bean id="simpleLoggerProcessor"
+          class="org.bigdatadevs.kafkabatch.processor.impl.logger.SimpleLoggerProcessor"
           scope="prototype"
-        p:elasticSearchBatchService-ref="elasticSearchBatchService"
     />
 
-    <bean id="offsetLoggingCallback" class="org.elasticsearch.kafka.indexer.jobs.OffsetLoggingCallbackImpl"/>
+    <bean id="offsetLoggingCallback" class="org.bigdatadevs.kafkabatch.consumer.OffsetLoggingCallbackImpl"/>
 
     <bean id="consumerWorker"
-          class="org.elasticsearch.kafka.indexer.jobs.ConsumerWorker"
+          class="org.bigdatadevs.kafkabatch.consumer.ConsumerWorker"
           scope="prototype"
-        p:batchMessageProcessor-ref="messageProcessor"
+        p:batchMessageProcessor-ref="simpleLoggerProcessor"
         p:offsetLoggingCallback-ref="offsetLoggingCallback"
     />
 
-    <bean id="kafkaESConsumerManager" class="org.elasticsearch.kafka.indexer.jobs.ConsumerManager"
+    <bean id="kafkaESConsumerManager" class="org.bigdatadevs.kafkabatch.consumer.ConsumerManager"
           p:consumerStartOption="${consumer.start.option:RESTART}"
           p:consumerCustomStartOptionsFilePath="${consumer.custom.start.options.file:}"/>
 
