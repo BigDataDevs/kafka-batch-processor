@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	                    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <import resource="common.xml"/>
+    <util:properties id="applicationProperties"
+                     ignore-resource-not-found="true"
+                     location="classpath:config/kafkabatch.properties, file:${kafkabatch.properties}"
+    />
+    <context:property-placeholder
+            ignore-resource-not-found="true" properties-ref="applicationProperties"/>
+    <context:annotation-config />
+
+    <bean id="messageProcessor"
+          class="org.elasticsearch.kafka.indexer.service.impl.examples.ESBatchMessageProcessorImpl"
+          scope="prototype"
+        p:elasticSearchBatchService-ref="elasticSearchBatchService"
+    />
+
+    <bean id="offsetLoggingCallback" class="org.elasticsearch.kafka.indexer.jobs.OffsetLoggingCallbackImpl"/>
+
+    <bean id="consumerWorker"
+          class="org.elasticsearch.kafka.indexer.jobs.ConsumerWorker"
+          scope="prototype"
+        p:batchMessageProcessor-ref="messageProcessor"
+        p:offsetLoggingCallback-ref="offsetLoggingCallback"
+    />
+
+    <bean id="kafkaESConsumerManager" class="org.elasticsearch.kafka.indexer.jobs.ConsumerManager"
+          p:consumerStartOption="${consumer.start.option:RESTART}"
+          p:consumerCustomStartOptionsFilePath="${consumer.custom.start.options.file:}"/>
+
+</beans>

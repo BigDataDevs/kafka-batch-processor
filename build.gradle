@@ -9,29 +9,81 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id 'java'
+    id 'idea'
 }
 
+group = 'org.bigdatadevs.kafkabatch'
+version = release + '.' + build
+mainClassName = "org.bigdatadevs.kafkabatch.BatchProcessStarter"
+
+description = "kafka-batch-processor"
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
+
 repositories {
-    // Use JCenter for resolving dependencies.
-    jcenter()
+    mavenLocal()
+    mavenCentral()
+}
+
+ext {
+    spring_version = '5.1.20.RELEASE'
+    slf4j_version = '1.7.30'
+    log4j_to_slf4j_version = '2.13.+'
+    logback_version = '1.2.3'
+    kafka_version = '2.5.1'
 }
 
 dependencies {
-    // Use JUnit Jupiter API for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
-
-    // Use JUnit Jupiter Engine for testing.
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-
+    // https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients
+    implementation group: 'org.apache.kafka', name: 'kafka-clients', version: "${kafka_version}"
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:29.0-jre'
+    // https://mvnrepository.com/artifact/org.springframework/
+    implementation group: 'org.springframework', name: 'spring-core', version: "${spring_version}"
+    implementation group: 'org.springframework', name: 'spring-context', version: "${spring_version}"
+
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: "${slf4j_version}"
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-to-slf4j
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: "${log4j_to_slf4j_version}"
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
+    implementation group: 'ch.qos.logback', name: 'logback-core', version: "${logback_version}"
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: "${logback_version}"
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
+    // missing in JDK since Java 11
+    implementation group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.+'
+
+    // for testing:
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.7.+'
+    testImplementation group: 'org.springframework', name: 'spring-test', version: "${spring_version}"
+    // Use JUnit Jupiter API for testing.
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    // Use JUnit Jupiter Engine for testing.
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
 application {
     // Define the main class for the application.
-    mainClass = 'org.bigdatadevs.kafka.App'
+    mainClass = 'org.bigdatadevs.kafkabatch.BatchProcessStarter'
 }
 
+processResources {
+    filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [version: project.version])
+}
+
+jar {
+    exclude ("config")
+    manifest {
+        attributes(
+                "Implementation-Title": rootProject.name,
+                "Implementation-Version": version,
+                "Build-Time": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        )
+    }
+}
 tasks.named('test') {
     // Use junit platform for unit tests.
     useJUnitPlatform()
