@@ -14,7 +14,8 @@ plugins {
 }
 
 group = 'org.bigdatadevs.kafkabatch'
-version = release + '.' + build
+//version = release + '.' + build
+version = "1.0"
 mainClassName = "org.bigdatadevs.kafkabatch.BatchProcessStarter"
 
 description = "kafka-batch-processor"
@@ -84,6 +85,11 @@ jar {
         )
     }
 }
+run {
+    // support passing -Dsystem.property=value to bootRun task
+    systemProperties = System.properties
+}
+
 tasks.named('test') {
     // Use junit platform for unit tests.
     useJUnitPlatform()

@@ -16,17 +16,21 @@ Provided example implementations of the IBatchProcessor are:
 
 It is a simple Spring-based Java library - that can be easily included as a JAR dependency to your own project - and used to process events from Kafka in batches.
 
-You can easily customize how to handle:
+**Main features:**
 
-** logical boundaries of the "batches" of events
+** starting offsets positions per partition can be specified via configuration properties
 
-** recoverable vs, non-recoverable exceptions while processing events and batches
+** customizable destinations for processed batchs of messages
 
-** when and under what conditions to commit or not commit offsets of "processed" batches
+** customizable logical boundaries of the "batches" of events
 
-** retry behavior in cases of failures
+** customizable handling and definition of recoverable vs, non-recoverable exceptions while processing events and batches
 
-** starting offsets positions per partition
+** customizable logic for when and under what conditions to commit or not commit offsets of "processed" batches
+
+** customizable retry behavior in cases of failures
+
+** offsets can be exposed to other systems - like JMX/monitoring or external storage
 
 
 ## Architecture of the kafka-batch-processor
@@ -52,20 +56,39 @@ Kafka Batch Processor is highly scalable. To scale horizontally - you need to st
 ![](images/Kafka-batch-processor-Architecture2.jpg)
 
 
-**Main features:**
-
-* starting offset positions can be specified via configuration properties
-* IConsumerWorker interface-based consumers allow you to :
-
-** customize how offsets are exposed to other systems - like JMX/monitoring or external storage
-
-** customize when offsets are committed to Kafka - allowing you to specify your own logic/rules for re-processing of potentially failed events/batchs
-
-* IBatchMessageProcessor interface-based batch processors can be customized to process each batch of messages into any destination
-
 # How to use ? 
 
-TODO
+Running via Gradle
+
+** Download the code into a $PROJECT_HOME dir
+
+** $PROJECT_HOME/src/main/resources/config/kafkabatch.properties: update all relevant properties as explained in the comments.
+
+** $PROJECT_HOME/src/main/resources/config/logback.xml: specify directory you want to store logs in: <property name="LOG_DIR" value="/tmp/logs"/>.
+Adjust values of max sizes and number of log files as needed.
+
+** $PROJECT_HOME/src/main/resources/config/kafkabatch-start-options.config - consumer start options can be configured here (Start from earliest, latest, etc), more details inside a file.
+
+** modify $PROJECT_HOME/src/main/resources/spring/kafkabatch-context-public.xml if needed:
+
+    Specify which IBatchProcessor class you want to use: (make sure to only modify the class name, not the beans' name/scope)
+
+    <bean id="messageProcessor" class="org.bigdatadevs.kafkabatch.processor.impl.logger.SimpleLoggerProcessor" scope="prototype" p:elasticSearchBatchService-ref="elasticSearchBatchService"/>
+
+** build the app:
+
+    cd $PROJECT_HOME
+
+    ./gradlew clean jar
+
+The kafka_batch_processor-1.0.jar will be created in the $PROJECT_HOME/build/libs/ dir.
+
+make sure your $JAVA_HOME env variable is set (use JDK1.8 or above); you may want to adjust JVM options and other values in the gradlew script and gradle.properties file
+
+** run the app:
+
+    ./gradlew run -Dkafkabatch.properties=$PROJECT_HOME/src/main/resources/config/kafkabatch.properties -Dlogback.configurationFile=$PROJECT_HOME/src/main/resources/config/logback.xml
+
 
 # Versions
 
@@ -80,17 +103,17 @@ TODO
 Application properties are specified via the kafka-batch-processor.properties file - you have to adjust properties for your env:
 TODO add link
 
-You can specify you own properties file via `-Dprocessor.properties=/abs-path/your-kafka-processor.properties`
+You can specify you own properties file via `-Dkafkabatch.properties=/abs-path/your-kafkabatch.properties`
 
 Logging properties are specified in the logback.xml file - you have to adjust properties for your env:
 [logback.xml](src/main/resources/config/logback.xml).
 You can specify your own logback config file via `-Dlogback.configurationFile=/abs-path/your-logback.xml` property
 
-Application Spring configuration is specified in the kafka-batch-context-public.xml
+Application Spring configuration is specified in the kafkabatch-context-public.xml
 
 Consumer start options can be specified with system property `consumer.start.option`. The value of this property can be `RESTART`, `EARLIEST`, `LATEST`  which applied for all partitions or `CUSTOM` which requires additional property `consumer.custom.start.options.file`. 
 The value of `consumer.custom.start.options.file` property is an absolute path to the custom start offsets configuration file. 
-(see [kafka-batch-custom-start-options.properties](src/main/resources/config/kafka-batch-custom-start-options.properties)).
+(see [kafkabatch-custom-start-options.properties](src/main/resources/config/kafkabatch-custom-start-options.properties)).
 TODO fix links
 By default `RESTART` option is used for all partitions.
 
@@ -98,7 +121,7 @@ Examples:
 - `-Dconsumer.start.option=RESTART`
 - `-Dconsumer.start.option=LATEST`
 - `-Dconsumer.start.option=EARLIEST`
-- `-Dconsumer.start.option=CUSTOM -Dconsumer.custom.start.options.file=/abs-path/your-kafka-es-indexer-custom-start-options.properties`
+- `-Dconsumer.start.option=CUSTOM -Dconsumer.custom.start.options.file=/abs-path/your-kafkabatch-custom-start-options.properties`
 
 # Customization
 TODO

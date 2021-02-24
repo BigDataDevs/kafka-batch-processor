@@ -11,8 +11,8 @@ public class BatchProcessStarter {
     private static final Logger logger = LoggerFactory.getLogger(BatchProcessStarter.class);
     public static void main(String[] args) throws Exception {
         logger.info("Starting Kafka batch consumer and producer: BatchProcessStarter ");
-        ClassPathXmlApplicationContext indexerContext = new ClassPathXmlApplicationContext("spring/kafkabatch-context-public.xml");
-        indexerContext.registerShutdownHook();
+        ClassPathXmlApplicationContext kafkaBatchContext = new ClassPathXmlApplicationContext("spring/kafkabatch-context-public.xml");
+        kafkaBatchContext.registerShutdownHook();
 
         logger.info("BatchProcessStarter is started OK");
 
