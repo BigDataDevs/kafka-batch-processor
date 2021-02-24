@@ -15,7 +15,7 @@
             ignore-resource-not-found="true" properties-ref="applicationProperties"/>
     <context:annotation-config />
 
-    <bean id="simpleLoggerProcessor"
+    <bean id="messageProcessor"
           class="org.bigdatadevs.kafkabatch.processor.impl.logger.SimpleLoggerProcessor"
           scope="prototype"
     />
@@ -25,7 +25,7 @@
     <bean id="consumerWorker"
           class="org.bigdatadevs.kafkabatch.consumer.ConsumerWorker"
           scope="prototype"
-        p:batchMessageProcessor-ref="simpleLoggerProcessor"
+        p:batchMessageProcessor-ref="messageProcessor"
         p:offsetLoggingCallback-ref="offsetLoggingCallback"
     />
 
