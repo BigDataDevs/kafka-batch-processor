@@ -6,7 +6,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	                    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <import resource="common.xml"/>
     <util:properties id="applicationProperties"
                      ignore-resource-not-found="true"
                      location="classpath:config/kafkabatch.properties, file:${kafkabatch.properties}"
@@ -29,7 +28,7 @@
         p:offsetLoggingCallback-ref="offsetLoggingCallback"
     />
 
-    <bean id="kafkaESConsumerManager" class="org.bigdatadevs.kafkabatch.consumer.ConsumerManager"
+    <bean id="kafkaConsumerManager" class="org.bigdatadevs.kafkabatch.consumer.ConsumerManager"
           p:consumerStartOption="${consumer.start.option:RESTART}"
           p:consumerCustomStartOptionsFilePath="${consumer.custom.start.options.file:}"/>
 
